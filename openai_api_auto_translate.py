@@ -2,8 +2,11 @@
 # https://github.com/FlyingFathead/PDF-translator-OpenAI-API/
 #
 # FlyingFathead // Dec 2023
-# v0.04
-# - calculate both tokens and chars
+# v0.05
+#
+# changelog:
+# v0.05 - calculate the cost approximation
+# v0.04 - calculate both tokens and chars
 
 import sys
 import os
@@ -12,6 +15,8 @@ import configparser
 
 import openai
 from transformers import GPT2Tokenizer
+
+from openai_pricing_calculator import calculate_cost
 
 # print term width horizontal line
 def hz_line(character='-'):
@@ -126,8 +131,20 @@ def main(directory, model, char_limit, instructions):
     print(f"::: Combined character length: {total_chars} characters")  # Display total characters
     print(f"::: Instructions to the model: {instructions}")
     print(f"::: Model in use: {model}")
-    hz_line()
 
+    # Calculate and display cost
+    # Assuming output token count is approximately equal to input token count
+    input_token_count = total_tokens
+    output_token_count = total_tokens  # Approximation
+
+    # Calculate and display cost
+    try:
+        cost = calculate_cost(model, input_token_count, output_token_count)
+        print(f"::: Estimated cost for translation: ${cost:.4f}")
+    except ValueError as e:
+        print(f"Error in cost calculation: {e}")
+
+    hz_line()
 
     confirm = input("Do you wish to continue (y/n)? ")
     if confirm.lower() != 'y':
