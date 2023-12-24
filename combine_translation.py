@@ -22,7 +22,7 @@ def main(directory):
     combined_translation = f"=== [ Translation from: {base_filename} ]\n\n"
 
     for i, file in enumerate(translated_files, start=1):
-        combined_translation += f"=== [ Page {i} / {total_pages} ] ===\n\n"  # Added empty line here
+        combined_translation += f"=== [ {base_filename} | Page {i} / {total_pages} ] ===\n\n"  # Added empty line here
 
         with open(os.path.join(directory, file), 'r', encoding='utf-8') as f:
             combined_translation += f.read() + "\n\n"
