@@ -26,6 +26,16 @@ Experimental Python-based PDF/plaintext translator that utilizes the OpenAI API
 - `splitter.py` also tries to auto-sanitize tha pdf dump at the moment -- this might not be suitable for your use case scenario, so again -- look at the split dumps first before you run it through a LLM translation -- GIGO (garbage in, garbage out) applies to NLP translations as well.
 - (Coming soon) pipeline to automate the actual translation process.
 
+# Changelog
+- v0.10 - translation combining via `combine_translation.py`
+- v0.09 - token handling, naming policy
+- v0.08 - more changes to the API call functionality
+- v0.07 - API call updated and fixed for openai >v1.0
+- v0.06 - fixes to the API call
+- v0.05 - calculate the cost approximation
+- v0.04 - calculate both tokens and chars
+- v0.03 and earlier: rudimentary sketches
+
 # Todo
 - More streamlined automation for the translation process
 - Perhaps an optional GUI with a PDF reader
