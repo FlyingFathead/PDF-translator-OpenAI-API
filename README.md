@@ -11,10 +11,13 @@ Experimental Python-based PDF/plaintext translator that utilizes the OpenAI API
 - Translation module requires the `openai` package (`pip install -U openai`) and a functioning API key.
 - Put the API key into your environmental variables or as `api_token.txt` into your program directory.
 
-# Functionalities so far
+# Functionalities so far / processing order
 
-- `pdf_reader_splitter.py` to dump to splits by page straight from the pdf. Also supports cmdline option for setting split on chars. WIP, as usual.
-- `openai_api_auto_translate.py` to translate an entire directory (where you dumped your stuff into with `pdf_reader_splitter.py`). Edit `config.ini` to set your own parameters for translation.
+1) `pdf_reader_splitter.py <pdf file>` to dump to splits by page straight from the pdf. Also supports cmdline option for setting split on chars. WIP, as usual.
+2) `openai_api_auto_translate.py <directory name>` to translate an entire directory (where you dumped your stuff into with `pdf_reader_splitter.py`). Edit `config.ini` to set your own parameters for translation.
+3) `combine_translation.py <directory name>` to combine the splits back into one piece.
+
+# Other stuff
 
 - `pdfmine.py your_file.pdf` to dump the text layer of a PDF to plaintext.
 - `tokencounter.py` to estimate the amount of tokens that the text file has for a rough token usage estimate.
@@ -23,4 +26,6 @@ Experimental Python-based PDF/plaintext translator that utilizes the OpenAI API
 - (Coming soon) pipeline to automate the actual translation process.
 
 # Todo
+- More streamlined automation for the translation process
+- Perhaps an optional GUI with a PDF reader
 - Looking into PDF file layers to see if we could replace the contents in-place (get text block layer from PDF page => sanitize => LLM translate => insert back in-place)
