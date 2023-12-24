@@ -14,6 +14,7 @@ Experimental Python-based PDF/plaintext translator that utilizes the OpenAI API
 # Functionalities so far
 
 - `pdf_reader_splitter.py` to dump to splits by page straight from the pdf. Also supports cmdline option for setting split on chars. WIP, as usual.
+- `openai_api_auto_translate.py` to translate an entire directory (where you dumped your stuff into with `pdf_reader_splitter.py`). Edit `config.ini` to set your own parameters for translation.
 
 - `pdfmine.py your_file.pdf` to dump the text layer of a PDF to plaintext.
 - `tokencounter.py` to estimate the amount of tokens that the text file has for a rough token usage estimate.
