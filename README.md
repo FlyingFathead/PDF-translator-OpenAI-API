@@ -40,3 +40,8 @@ Experimental Python-based PDF/plaintext translator that utilizes the OpenAI API
 - More streamlined automation for the translation process
 - Perhaps an optional GUI with a PDF reader
 - Looking into PDF file layers to see if we could replace the contents in-place (get text block layer from PDF page => sanitize => LLM translate => insert back in-place)
+
+# About
+
+- Started as a Grindmas (= Code-Grinding Christmas) project for [Skrolli magazine](https://skrolli.fi)
+- [FlyingFathead](https://github.com/FlyingFathead) w/ code whispers from ChaosWhisperer
