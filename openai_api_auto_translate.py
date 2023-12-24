@@ -2,9 +2,10 @@
 # https://github.com/FlyingFathead/PDF-translator-OpenAI-API/
 #
 # FlyingFathead // Dec 2023
-# v0.09
+# v0.10
 #
 # changelog:
+# v0.10 - translation combining via `combine_translation.py`
 # v0.09 - token handling, naming policy
 # v0.08 - more changes to the API call functionality
 # v0.07 - API call updated and fixed for openai >v1.0
