@@ -12,17 +12,17 @@ def main(directory):
 
     # Find all translated files and sort them numerically
     translated_files = sorted([f for f in os.listdir(directory) if f.startswith('translated_') and f.endswith('.txt')],
-                              key=lambda x: int(re.search(r'_split_(\d+)', x).group(1)))
+                              key=lambda x: int(re.search(r'_split_(\d+)', x).group(1)) if re.search(r'_split_(\d+)', x) else 0)
 
     if not translated_files:
         print("No translated files found in the directory.")
         sys.exit(1)
 
     total_pages = len(translated_files)
-    combined_translation = f"Translation from: {base_filename}\n\n"
+    combined_translation = f"=== [ Translation from: {base_filename} ]\n\n"
 
     for i, file in enumerate(translated_files, start=1):
-        combined_translation += f"=== [ Page {i} / {total_pages} ] ===\n"
+        combined_translation += f"=== [ Page {i} / {total_pages} ] ===\n\n"  # Added empty line here
 
         with open(os.path.join(directory, file), 'r', encoding='utf-8') as f:
             combined_translation += f.read() + "\n\n"
@@ -31,7 +31,7 @@ def main(directory):
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write(combined_translation)
 
-    print(f"Combined translation written to: {output_file}")
+    print(f"Combined translation written to {output_file}")
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
