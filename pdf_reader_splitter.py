@@ -49,7 +49,8 @@ def sanitize_content(text):
     return text
 
 # Extract all text from the PDF.
-def extract_text(pdf_file):
+# Renamed function to avoid conflict with pdfminer's extract_text
+def extract_full_text(pdf_file):
     text_content = ''
     for page_layout in extract_pages(pdf_file):
         for element in page_layout:
@@ -114,7 +115,7 @@ def main(pdf_file, split_by='page', char_limit=5000):
     if split_by == 'page':
         sections = extract_text_by_page(pdf_file)
     else:
-        full_text = extract_text(pdf_file)  # This function extracts all text
+        full_text = extract_full_text(pdf_file)  # Renamed function call
         full_text = sanitize_content(full_text)
         sections = split_text_by_char_limit(full_text, char_limit)
 
