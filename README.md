@@ -9,7 +9,7 @@ Experimental Python-based PDF/plaintext translator that utilizes the OpenAI API
 - `pdfmine.py` requires `pdfminer.six` -- install with: `pip install -U pdfminer.six`
 - `tokencounter.py` requires `transformers` -- install with `pip install -U transformers`
 - Translation module requires the `openai` package (`pip install -U openai`) and a functioning API key.
-- Put the API key into your environmental variables or as `api_token.txt` into your program directory.
+- Put the API key into your environmental variables as `OPENAI_API_KEY` or into a single line entry into `api_token.txt` that is located in the program directory.
 
 # Functionalities so far / processing order
 
