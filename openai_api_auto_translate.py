@@ -2,9 +2,10 @@
 # https://github.com/FlyingFathead/PDF-translator-OpenAI-API/
 #
 # FlyingFathead // Dec 2023
-# v0.05
+# v0.06
 #
 # changelog:
+# v0.06 - fixes to the API call
 # v0.05 - calculate the cost approximation
 # v0.04 - calculate both tokens and chars
 
@@ -73,14 +74,15 @@ def count_tokens_and_chars(file_path):
         print(f"Error processing file: {e}")
         return None, None  # Return None for both counts in case of an error
 
-def translate_text(text, model, instructions):
+# text translation via OpenAI API
+def translate_text(text, model, instructions, max_tokens):
     try:
         response = openai.Completion.create(
-            engine=model,
+            model=model,
             prompt=f"{instructions}: '{text}'",
-            max_tokens=32000  # Adjust as needed
+            max_tokens=max_tokens  # Use the max_tokens from config
         )
-        return response.choices[0].text.strip()
+        return response['choices'][0]['text'].strip()
     except Exception as e:
         print(f"Error during translation: {e}")
         return None
@@ -103,7 +105,7 @@ def split_text_for_translation(file_path, char_limit):
     return sections
 
 # def main(file_path, char_limit):
-def main(directory, model, char_limit, instructions):
+def main(directory, model, char_limit, instructions, max_tokens):
     if not os.path.exists(directory) or not os.path.isdir(directory):
         print(f"Directory {directory} does not exist or is not a directory.")
         sys.exit(1)
@@ -166,7 +168,7 @@ def main(directory, model, char_limit, instructions):
             print(f"Translating segment: {i}/{len(sections)} of file {file}", flush=True)
             hz_line()
 
-            translated_section = translate_text(section, model, instructions)
+            translated_section = translate_text(section, model, instructions, max_tokens)
             if translated_section:
                 formatted_index = str(i).zfill(num_digits)
                 output_filename = os.path.join(output_dir, f"{base_name}_translated_split_{formatted_index}.txt")
@@ -183,6 +185,7 @@ if __name__ == "__main__":
     config = load_config()
     directory = sys.argv[1]
     char_limit = int(config.get('MaxCharacterLimit', 100000))
+    max_tokens = int(config.get('MaxTokens', 32000))  # Default to 32000 if not set    
     model = config.get('Model', 'gpt-3.5-turbo')
     instructions = config.get('TranslationInstructions', 'Translate this Finnish text to English, format the text properly')
 
