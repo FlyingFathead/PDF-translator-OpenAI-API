@@ -1,7 +1,9 @@
 # PDF-translator-OpenAI-API
 # https://github.com/FlyingFathead/PDF-translator-OpenAI-API/
+#
 # FlyingFathead // Dec 2023
-# v0.03
+# v0.04
+# - calculate both tokens and chars
 
 import sys
 import os
@@ -42,28 +44,29 @@ if openai.api_key is None:
     sys.exit(1)
 
 # count the tokens
-def count_tokens(file_path):
+def count_tokens_and_chars(file_path):
     tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-    max_length = tokenizer.model_max_length  # Get the max length supported by the tokenizer
+    max_length = tokenizer.model_max_length
 
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
             text = file.read()
 
-        # Split the text into smaller chunks
         tokens_count = 0
+        chars_count = 0  # Initialize character count
         start = 0
         while start < len(text):
             end = start + max_length
             chunk = text[start:end]
-            tokens = tokenizer.encode(chunk, add_special_tokens=False)  # Do not add special tokens for each chunk
+            tokens = tokenizer.encode(chunk, add_special_tokens=False)
             tokens_count += len(tokens)
+            chars_count += len(chunk)  # Count characters in the chunk
             start = end
 
-        return tokens_count
+        return tokens_count, chars_count
     except Exception as e:
         print(f"Error processing file: {e}")
-        return None
+        return None, None  # Return None for both counts in case of an error
 
 def translate_text(text, model, instructions):
     try:
@@ -106,20 +109,25 @@ def main(directory, model, char_limit, instructions):
         sys.exit(1)
 
     total_tokens = 0
-    print("Calculating token counts for files...", flush=True)
+    total_chars = 0  # Total character count
+
+    print("Calculating token and character counts for files...", flush=True)
     for file in text_files:
         file_path = os.path.join(directory, file)
-        token_count = count_tokens(file_path)
-        if token_count is not None:
+        token_count, char_count = count_tokens_and_chars(file_path)
+        if token_count is not None and char_count is not None:
             total_tokens += token_count
+            total_chars += char_count  # Sum character counts
 
     hz_line()
-    print(f"Directory: {directory}")
-    print(f"Number of text files: {len(text_files)}")
-    print(f"Combined length: {total_tokens} tokens")
-    print(f"Instructions to the model: {instructions}")  # Use instructions from config
-    print(f"Model in use: {model}")
+    print(f"::: Directory: {directory}")
+    print(f"::: Number of text files: {len(text_files)}")
+    print(f"::: Combined token length: {total_tokens} tokens")
+    print(f"::: Combined character length: {total_chars} characters")  # Display total characters
+    print(f"::: Instructions to the model: {instructions}")
+    print(f"::: Model in use: {model}")
     hz_line()
+
 
     confirm = input("Do you wish to continue (y/n)? ")
     if confirm.lower() != 'y':
