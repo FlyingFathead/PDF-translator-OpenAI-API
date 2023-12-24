@@ -16,6 +16,7 @@ Experimental Python-based PDF/plaintext translator that utilizes the OpenAI API
 1) `pdf_reader_splitter.py <pdf file>` to dump to splits by page straight from the pdf. Also supports cmdline option for setting split on chars. WIP, as usual.
 2) `openai_api_auto_translate.py <directory name>` to translate an entire directory (where you dumped your stuff into with `pdf_reader_splitter.py`). Edit `config.ini` to set your own parameters for translation.
 3) `combine_translation.py <directory name>` to combine the splits back into one piece.
+4) `post_process.py <textfile>` for final touches, i.e. any paragraphs that are without an empty line in between, add one in, and trim multiple empty lines.
 
 # Other stuff
 
