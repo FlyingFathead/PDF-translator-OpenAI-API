@@ -185,9 +185,9 @@ if __name__ == "__main__":
     config = load_config()
     directory = sys.argv[1]
     char_limit = int(config.get('MaxCharacterLimit', 100000))
-    max_tokens = int(config.get('MaxTokens', 32000))  # Default to 32000 if not set    
+    max_tokens = int(config.get('MaxTokens', 32000))  # Default to 32000 if not set
     model = config.get('Model', 'gpt-3.5-turbo')
     instructions = config.get('TranslationInstructions', 'Translate this Finnish text to English, format the text properly')
 
-    # Call main with the instructions parameter
-    main(directory, model=model, char_limit=char_limit, instructions=instructions)
+    # Call main with the necessary parameters
+    main(directory, model=model, char_limit=char_limit, instructions=instructions, max_tokens=max_tokens)
