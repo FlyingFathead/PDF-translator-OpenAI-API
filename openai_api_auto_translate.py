@@ -2,9 +2,12 @@
 # https://github.com/FlyingFathead/PDF-translator-OpenAI-API/
 #
 # FlyingFathead // Dec 2023
-# v0.06
+# v0.09
 #
 # changelog:
+# v0.09 - token handling, naming policy
+# v0.08 - more changes to the API call functionality
+# v0.07 - API call updated and fixed for openai >v1.0
 # v0.06 - fixes to the API call
 # v0.05 - calculate the cost approximation
 # v0.04 - calculate both tokens and chars
@@ -75,18 +78,33 @@ def count_tokens_and_chars(file_path):
         return None, None  # Return None for both counts in case of an error
 
 # text translation via OpenAI API
-def translate_text(text, model, instructions, max_tokens):
+def translate_text(text, model, instructions, max_allowed_tokens):
+    client = openai.OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+
+    # Tokenize the input text to estimate its length
+    input_tokens = len(text.split())  # This is a rough estimation
+
+    # Adjust max_tokens to avoid exceeding the model's limit
+    max_tokens = max_allowed_tokens - input_tokens
+
+    # Ensure max_tokens is positive and within a reasonable range
+    max_tokens = max(1, min(max_tokens, max_allowed_tokens))
+
     try:
-        response = openai.Completion.create(
+        response = client.chat.completions.create(
             model=model,
-            prompt=f"{instructions}: '{text}'",
-            max_tokens=max_tokens  # Use the max_tokens from config
+            messages=[
+                {"role": "system", "content": f"{instructions}"},
+                {"role": "user", "content": text}
+            ],
+            max_tokens=max_tokens
         )
-        return response['choices'][0]['text'].strip()
+        # Access the completion using the appropriate method
+        return response.choices[0].message.content.strip()
     except Exception as e:
         print(f"Error during translation: {e}")
         return None
-
+    
 def split_text_for_translation(file_path, char_limit):
     with open(file_path, 'r', encoding='utf-8') as file:
         content = file.read()
@@ -155,26 +173,26 @@ def main(directory, model, char_limit, instructions, max_tokens):
 
     for file in text_files:
         file_path = os.path.join(directory, file)
-        base_name = os.path.splitext(os.path.basename(file_path))[0]
-        output_dir = f"{directory}/{base_name}-translations"
-        os.makedirs(output_dir, exist_ok=True)
+        base_name, file_extension = os.path.splitext(file)
+        output_filename = os.path.join(directory, f"translated_{base_name}{file_extension}")
 
         print(f"Processing file: {file}", flush=True)
         sections = split_text_for_translation(file_path, char_limit)
-        num_digits = len(str(len(sections)))
 
+        translated_content = ""  # Initialize an empty string to accumulate translated sections
         for i, section in enumerate(sections, start=1):
             hz_line()
-            print(f"Translating segment: {i}/{len(sections)} of file {file}", flush=True)
+            print(f"::: Translating segment: {i}/{len(sections)} of file {file}", flush=True)
             hz_line()
 
             translated_section = translate_text(section, model, instructions, max_tokens)
             if translated_section:
-                formatted_index = str(i).zfill(num_digits)
-                output_filename = os.path.join(output_dir, f"{base_name}_translated_split_{formatted_index}.txt")
-                with open(output_filename, 'w', encoding='utf-8') as output_file:
-                    output_file.write(translated_section)
-                print(f"Translated section {formatted_index} written to {output_filename}", flush=True)
+                translated_content += translated_section  # Append each translated section
+
+        # Write all translated content to a single file
+        with open(output_filename, 'w', encoding='utf-8') as output_file:
+            output_file.write(translated_content)
+        print(f"Translated file written to {output_filename}", flush=True)
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
@@ -185,7 +203,7 @@ if __name__ == "__main__":
     config = load_config()
     directory = sys.argv[1]
     char_limit = int(config.get('MaxCharacterLimit', 100000))
-    max_tokens = int(config.get('MaxTokens', 32000))  # Default to 32000 if not set
+    max_tokens = int(config.get('MaxTokens', 16000))  # Default to 16000 if not set
     model = config.get('Model', 'gpt-3.5-turbo')
     instructions = config.get('TranslationInstructions', 'Translate this Finnish text to English, format the text properly')
 
