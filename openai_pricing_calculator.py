@@ -8,7 +8,7 @@ def calculate_cost(model, input_token_count, output_token_count):
         'gpt-4': {'input': 0.03, 'output': 0.06},
         'gpt-4-32k': {'input': 0.06, 'output': 0.12},
         'gpt-3.5-turbo': {'input': 0.0010, 'output': 0.0020},
-        'gpt-3.5-turbo-16k': {'input': 0.0010, 'output': 0.0020},        
+        'gpt-3.5-turbo-16k': {'input': 0.0030, 'output': 0.0040},        
         'gpt-3.5-turbo-1106': {'input': 0.0010, 'output': 0.0020},
         'gpt-3.5-turbo-instruct': {'input': 0.0015, 'output': 0.0020}
     }
