@@ -27,6 +27,8 @@ Experimental Python-based PDF/plaintext translator that utilizes the OpenAI API
 - (Coming soon) pipeline to automate the actual translation process.
 
 # Changelog
+- v0.12 - early alpha test for the GUI; `gui-translator.py`
+- v0.11 - bugfixes
 - v0.10 - translation combining via `combine_translation.py`
 - v0.09 - token handling, naming policy
 - v0.08 - more changes to the API call functionality
