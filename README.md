@@ -18,6 +18,9 @@ Experimental Python-based PDF/plaintext translator that utilizes the OpenAI API
 3) `combine_translation.py <directory name>` to combine the splits back into one piece.
 4) `post_process.py <textfile>` for final touches, i.e. any paragraphs that are without an empty line in between, add one in, and trim multiple empty lines.
 
+# WIP
+- `gui-translator.py` - an early alpha GUI for side-by-side / A/B type comparison with a graphical user interface.
+
 # Other stuff
 
 - `pdfmine.py your_file.pdf` to dump the text layer of a PDF to plaintext.
