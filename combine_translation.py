@@ -1,3 +1,6 @@
+# early alpha
+# v0.12 
+
 import sys
 import os
 import re
