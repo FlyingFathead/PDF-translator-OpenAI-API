@@ -13,6 +13,7 @@ Experimental Python-based PDF/plaintext translator that utilizes the OpenAI API
 
 # Functionalities so far / processing order
 
+0/x) `pdfget.py <directory>` will use `fitz` (PyMuPDF) in order to dump the text in a natural reading order by approximating the position on the page.
 1) `pdf_reader_splitter.py <pdf file>` to dump to splits by page straight from the pdf. Also supports cmdline option for setting split on chars. WIP, as usual.
 2) `openai_api_auto_translate.py <directory name>` to translate an entire directory (where you dumped your stuff into with `pdf_reader_splitter.py`). Edit `config.ini` to set your own parameters for translation.
 3) `combine_translation.py <directory name>` to combine the splits back into one piece.
@@ -30,6 +31,7 @@ Experimental Python-based PDF/plaintext translator that utilizes the OpenAI API
 - (Coming soon) pipeline to automate the actual translation process.
 
 # Changelog
+- v0.13 - added `pdfget.py` for natural reading order extraction using fitz (PyMuPDF)
 - v0.12 - early alpha test for the GUI; `gui-translator.py`
 - v0.11 - bugfixes
 - v0.10 - translation combining via `combine_translation.py`
