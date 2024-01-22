@@ -13,11 +13,16 @@ Experimental Python-based PDF/plaintext translator that utilizes the OpenAI API
 
 # Functionalities so far / processing order
 
-0/x) `pdfget.py <directory>` will use `fitz` (PyMuPDF) in order to dump the text in a natural reading order by approximating the position on the page.
+0) `pdfget.py <directory>` will use `fitz` (PyMuPDF) in order to dump the text in a natural reading order by approximating the position on the page. The current version adds a page separator and page counter between each page and dumps the plaintext files to `txt_raw` subdirectory. Then, `page_fixing.py <directory>` can be used on the `txt_raw` directory to dump the formatting per page into a more concise format, keeping the page splits. The output directory is `txt_processed`. Keep in mind that all of these are trial-and-error type approaches that may not be applicable to all use case scenarios.
+
 1) `pdf_reader_splitter.py <pdf file>` to dump to splits by page straight from the pdf. Also supports cmdline option for setting split on chars. WIP, as usual.
 2) `openai_api_auto_translate.py <directory name>` to translate an entire directory (where you dumped your stuff into with `pdf_reader_splitter.py`). Edit `config.ini` to set your own parameters for translation.
 3) `combine_translation.py <directory name>` to combine the splits back into one piece.
 4) `post_process.py <textfile>` for final touches, i.e. any paragraphs that are without an empty line in between, add one in, and trim multiple empty lines.
+
+## Text parsing with `spacy` (for specific use case scenarios only)
+- `pip install spacy` and then your needed packages like:
+- `python -m spacy download <your spacy package>`
 
 # WIP
 - `gui-translator.py` - an early alpha GUI for side-by-side / A/B type comparison with a graphical user interface.
