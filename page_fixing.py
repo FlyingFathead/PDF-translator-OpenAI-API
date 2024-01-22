@@ -4,6 +4,10 @@ import re
 import os
 import sys
 
+# Remove control characters
+def remove_control_characters(text):
+    return re.sub(r'[\x00-\x1F\x7F-\x9F]', '', text)
+
 def parse_text(text):
     # Split text by custom page markers and keep the markers with empty lines before and after
     pages = re.split(r"(=== \[\s*\d{4}-\d\s*\|\s*\d+/\d+\s*\] ===)", text)
@@ -24,6 +28,8 @@ def process_page(page_text):
     page_text = re.sub(r'-\s*\n', '', page_text)
     # Normalize spaces (including newlines)
     page_text = re.sub(r'\s+', ' ', page_text).strip()
+    # Remove control characters
+    page_text = remove_control_characters(page_text)
     return page_text + "\n"
 
 # Main function
