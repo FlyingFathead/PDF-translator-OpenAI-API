@@ -36,6 +36,7 @@ Experimental Python-based PDF/plaintext translator that utilizes the OpenAI API
 - (Coming soon) pipeline to automate the actual translation process.
 
 # Changelog
+- v0.14 - added `token_count_estimator.py` to run a token count estimate (with `spacy` and `tokenizer`)
 - v0.13 - added `pdfget.py` for natural reading order extraction using fitz (PyMuPDF)
 - v0.12 - early alpha test for the GUI; `gui-translator.py`
 - v0.11 - bugfixes
