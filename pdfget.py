@@ -6,21 +6,54 @@ import re
 import glob
 import os
 
+
+def format_filename(filename):
+    """
+    Format the filename to extract the magazine issue, any suffix, and special editions like international editions.
+    Additionally, handle exceptions like '-sample' files.
+    Example: '2017-1e.txt' -> 'Skrolli 2017.1E', '2016-1e-sample.txt' -> 'Skrolli 2016.1E Sample'
+    """
+    # Split filename and remove extension
+    base_name = os.path.splitext(filename)[0]
+
+    # Check if the filename ends with "-sample"
+    if base_name.endswith("-sample"):
+        # Handle sample files
+        base_name = base_name.replace("-sample", "")
+        sample_suffix = " Sample"
+    else:
+        sample_suffix = ""
+
+    # Extract year, issue, and suffix if any
+    match = re.match(r"(\d{4})-?(\w+)?-?(\d+)([a-zA-Z]*)", base_name)
+    if match:
+        year, suffix, issue, edition = match.groups()
+        formatted_name = f"Skrolli {year}.{issue}"
+        if edition:
+            formatted_name += edition.upper()  # Convert edition to uppercase (e.g., 'E' for international edition)
+        if suffix and not edition:
+            formatted_name += f" {suffix}"
+        return formatted_name + sample_suffix
+    else:
+        return base_name + sample_suffix  # Fallback to the base name if the pattern does not match
+
 def extract_text_from_pdf(pdf_path):
+    
     # Extract text from each page of the PDF.
-    # Include markers between each page in the format: === [ filename_without_extension | pagenumber / total pages] ===
+    # Include markers between each page in the format: 
+    # === [ formatted_filename | pagenumber / total pages] ===
     
     doc = fitz.open(pdf_path)
     extracted_text = ""
     total_pages = len(doc)
-    filename_without_extension = os.path.splitext(os.path.basename(pdf_path))[0]
+    formatted_filename = format_filename(os.path.basename(pdf_path))
 
     for page_num in range(total_pages):
         page = doc.load_page(page_num)
         text = page.get_text()
 
         # Add marker before the page text
-        page_marker = f"\n\n=== [ {filename_without_extension} | {page_num + 1}/{total_pages} ] ===\n\n"
+        page_marker = f"\n\n=== [ {formatted_filename} | {page_num + 1}/{total_pages} ] ===\n\n"
         extracted_text += page_marker + text
 
     doc.close()
@@ -41,14 +74,13 @@ def process_pdf_directory(directory):
 # Main function
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python script_name.py path_to_directory_containing_pdfs")
+        print("Usage: python pdfget.py path_to_directory_containing_pdfs")
         sys.exit(1)
 
     pdf_directory = sys.argv[1]
     process_pdf_directory(pdf_directory)
 
-
-## below is the old verison
+## below is the old version
 """ # old version, w/ parsing: pdfget.py
 
 import fitz  # PyMuPDF
