@@ -18,38 +18,6 @@ def fix_hyphenation_and_merge_lines(text):
 
     return text
 
-""" def fix_hyphenation_and_merge_lines(text):
-    # Remove hyphenation at the end of lines
-    text = re.sub(r'-\s*\n\s*', '', text)
-
-    # Optional: Merge lines that are split without hyphenation
-    # This step can be adjusted or omitted based on your specific needs
-    text = re.sub(r'(\w)\s*\n\s*(\w)', r'\1 \2', text)
-
-    return text
- """
-""" def fix_hyphenation_and_merge_lines(text):
-    # Remove hyphenation at the end of lines, considering special characters
-    text = re.sub(r'-\s*\n\s*(?=[a-zäöA-ZÄÖ])', '', text)
-
-    # Split the text into lines
-    lines = text.split('\n')
-    
-    # Define a pattern that matches if a line does NOT end in a comma or sentence-ending punctuation
-    pattern = re.compile(r'(?<![.,;:!?—])\s*\n\s*(?=[a-zäöA-ZÄÖ])')
-
-    # Apply the pattern to each line
-    for i in range(len(lines) - 1):
-        # If the pattern matches, merge the line with the next one
-        if pattern.search(lines[i]):
-            lines[i] = lines[i].rstrip() + ' ' + lines[i + 1].lstrip()
-            lines[i + 1] = ''
-
-    # Reassemble the text, filtering out empty lines that may have resulted from the merge
-    text = '\n'.join(filter(None, lines))
-
-    return text """
-
 def format_filename(filename):
 
     # Format the filename to extract the magazine issue, any suffix, and special editions like international editions.
