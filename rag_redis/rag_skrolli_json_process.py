@@ -2,25 +2,14 @@
 
 import json
 import os
-
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Redis
-from rag_redis.config import EMBED_MODEL, INDEX_NAME, INDEX_SCHEMA, REDIS_URL
-# from rag_redis.config import EMBED_MODEL, INDEX_NAME, REDIS_URL
-
-""" INDEX_SCHEMA = {
-    'text': [{'name': 'issue'}],
-    'numeric': [{'name': 'page'}, {'name': 'chunk_index'}],
-    'vector': [{'name': 'content_vector', 'algorithm': 'HNSW', 'datatype': 'FLOAT32', 'dims': 384, 'distance_metric': 'COSINE'}]
-}
- """
-
-print(f"Index schema: {INDEX_SCHEMA}")
+from rag_redis.config import EMBED_MODEL, INDEX_NAME, REDIS_URL
 
 def ingest_json_documents(json_directory):
     """
-    Ingest JSON data to Redis.
+    Ingest JSON data to Redis, ensuring compatibility with the Redis index schema.
     """
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=1500, chunk_overlap=100, length_function=len, is_separator_regex=False
@@ -33,28 +22,44 @@ def ingest_json_documents(json_directory):
                 data = json.load(file)
                 issue = data['issue']
 
-                # Generate metadata
-                metadatas = [{"issue": issue, "page": page['page'], "chunk_index": i} for page in data['pages'] for i, _ in enumerate(text_splitter.split_text(page['content']))]
+                all_texts = []
+                all_metadatas = []
 
-                # Print some sample metadata for debugging
-                print("Sample metadata:", metadatas[:3])  # Print first 3 metadata entries for inspection
-
-                all_chunks = []
                 for page in data['pages']:
-                    chunks = text_splitter.split_text(page['content'])  # Correct method call
-                    all_chunks.extend(chunks)
+                    page_content = page['content']
+                    chunks = text_splitter.split_text(page_content)
 
-                print(f"Done preprocessing {json_file}. Created {len(all_chunks)} chunks.")
+                    for i, chunk in enumerate(chunks):
+                        metadata = {
+                            "issue": issue,
+                            "source": f"Skrolli-lehti {issue}, sivu {page['page']}",
+                            "start_index": i,
+                            "content": chunk
+                        }
+                        all_metadatas.append(metadata)
+                        all_texts.append(chunk)
+
+                print(f"Done preprocessing {json_file}. Created {len(all_texts)} chunks.")
 
                 _ = Redis.from_texts(
-                    texts=[f"Skrolli magazine issue: {issue}. Page {page['page']}: " + chunk for page in data['pages'] for chunk in text_splitter.split_text(page['content'])],  # Updated line
-                    metadatas=[{"issue": issue, "page": page['page'], "chunk_index": i} for page in data['pages'] for i, _ in enumerate(text_splitter.split_text(page['content']))],  # Updated line
+                    texts=all_texts,
+                    metadatas=all_metadatas,
                     embedding=embedder,
                     index_name=INDEX_NAME,
-                    index_schema=INDEX_SCHEMA,
+                    index_schema = {
+                    "text": [
+                        {"name": "issue"},
+                        {"name": "source"},
+                        {"name": "content"},
+                    ],
+                    "numeric": [
+                        {"name": "start_index"},
+                    ],
+                    "tag": [],
+                },
                     redis_url=REDIS_URL,
                 )
 
 if __name__ == "__main__":
-    json_directory = './json/'
+    json_directory = './json/'  # Adjust the path to your JSON directory
     ingest_json_documents(json_directory)
