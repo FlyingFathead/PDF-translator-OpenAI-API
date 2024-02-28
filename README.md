@@ -1,6 +1,8 @@
 # PDF-translator-OpenAI-API
 Experimental Python-based PDF/plaintext translator that utilizes the OpenAI API
 
+- Can be used to dump PDF content into JSON and further on to local databases or i.e. LLM supplementation with RAG
+
 - **NOTE: this is a highly experimental WIP pipeline for dumping PDF's into plaintext and getting them translated through the OpenAI API.**
 
 - **I do NOT recommend running it without first studying the code since the program is just an early trial at this point.**
